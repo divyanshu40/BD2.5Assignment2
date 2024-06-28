@@ -170,30 +170,45 @@ let stocks = [
   },
 ];
 // Endpoint 1: Get the stocks sorted by pricing
-function sortByPrice(stock1, stock2) {
-  return stock2.price - stock1.price;
+function sortByPrice(stock1, stock2, pricing) {
+  if (pricing === "low-to-high") {
+    return stock1.price - stock2.price;
+  } else {
+    return stock2.price - stock1.price;
+  }
 }
 app.get("/stocks/sort/pricing", (req, res) => {
+  let pricing = req.query.pricing;
   let sortedStocks = stocks.slice();
-  sortedStocks.sort(sortByPrice);
+  sortedStocks.sort((stock1, stock2) => sortByPrice(stock1, stock2, pricing));
   res.json({ sortedStocks: sortedStocks });
 });
 // Endpoint 2: Get the stocks sorted based on their Growth.
-function sortByGrowth(stock1, stock2) {
-  return stock1.growth - stock2.growth;
+function sortByGrowth(stock1, stock2, growth) {
+  if (growth === "low-to-high") {
+    return stock1.growth - stock2.growth;
+  } else {
+    return stock2.growth - stock1.growth;
+  }
 }
 app.get("/stocks/sort/growth", (req, res) => {
+  let growth = req.query.growth;
   let sortedStocks = stocks.slice();
-  sortedStocks.sort(sortByGrowth);
+  sortedStocks.sort((stock1, stock2) => sortByGrowth(stock1, stock2, growth));
   res.json({ sortedStocks: sortedStocks });
 });
 // Endpoint 3: Get the stocks sorted based on the Stock Name (Alphabetically)
-function sortBYName(stock1, stock2) {
-  return stock1.name.localeCompare(stock2.name);
+function sortBYName(stock1, stock2, name) {
+  if (name === "a-z") {
+    return stock1.name.localeCompare(stock2.name);
+  } else {
+    return stock2.name.localeCompare(stock1.name);
+  }
 }
 app.get("/stocks/sort/name", (req, res) => {
+  let name = req.query.name;
   let sortedStocks = stocks.slice();
-  sortedStocks.sort(sortBYName);
+  sortedStocks.sort((stock1, stock2) => sortBYName(stock1, stock2, name));
   res.json({ sortedStocks: sortedStocks });
 });
 // Endpoint 4: Filter the stocks based on the 2 Stock Exchange (NSE. and BSE)
@@ -202,7 +217,9 @@ function filterByExchange(stock, exchange) {
 }
 app.get("/stocks/filter/exchange", (req, res) => {
   let exchange = req.query.exchange;
-  let filteredStocks = stocks.filter((stock) => filterByExchange(stock, exchange));
+  let filteredStocks = stocks.filter((stock) =>
+    filterByExchange(stock, exchange),
+  );
   res.json({ filteredStocks: filteredStocks });
 });
 // Endpoint 5: Filter the stocks based on the Industrial Sector.
@@ -211,10 +228,12 @@ function filterBySector(stock, industry) {
 }
 app.get("/stocks/filter/industry", (req, res) => {
   let industry = req.query.industry;
-  let filteredStocks = stocks.filter((stock) => filterBySector(stock, industry));
-  res.json({ filteredStocks: filteredStocks});
+  let filteredStocks = stocks.filter((stock) =>
+    filterBySector(stock, industry),
+  );
+  res.json({ filteredStocks: filteredStocks });
 });
 // Endpoint 6: Send all available stocks
 app.get("/stocks", (req, res) => {
-  res.json({ stocks: stocks});
+  res.json({ stocks: stocks });
 });
